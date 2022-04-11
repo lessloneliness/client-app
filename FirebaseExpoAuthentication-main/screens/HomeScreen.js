@@ -1,51 +1,124 @@
-import { useNavigation } from '@react-navigation/core'
-import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View,Image  } from 'react-native'
-import { auth } from '../firebase'
+import { useNavigation } from "@react-navigation/core";
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  TextInput,
+} from "react-native";
+import { Button } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import { auth } from "../firebase";
+import * as ImagePicker from "expo-image-picker";
 
+export default function App() {
+  const [bio, setBio] = useState("details");
+  const [image, setImage] = useState(null);
 
-const HomeScreen = () => {
-  const navigation = useNavigation()
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  const handleSignOut = () => {
-    auth.signOut().then(() => {
-        navigation.replace("Less loneless")
-      }).catch(error => alert(error.message))
-  }
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 
   return (
     <View style={styles.container}>
-        <Text>Email: {auth.currentUser?.email}</Text>
-      
-      <TouchableOpacity
-        onPress={handleSignOut}
-        style={styles.button}
+      <View style={styles.body}></View>
+      <Text style={styles.text}>Less Lonlines</Text>
+      <Text
+        style={{
+          color: "black",
+          fontSize: 20,
+          textAlign: "center",
+          margin: 10,
+          fontStyle: "italic",
+        }}
       >
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
+        “ You cannot be lonely if you like the person you’re alone with .”
+      </Text>
+      <Text
+        style={{
+          color: "red",
+          fontSize: 20,
+          textAlign: "center",
+          margin: 10,
+          fontStyle: "italic",
+        }}
+      >
+        Create Profile
+      </Text>
+      <Button title={"Add Photo"} onPress={pickImage}></Button>
+      <Image
+        style={{ width: 200, height: 150 }}
+        source={{ uri: image }}
+      ></Image>
+      <Text>Enter bio</Text>
+      <Text>Bio:{bio}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="bio details"
+        onChangeText={(val) => setBio(val)}
+      />
+      <Button
+        title={"Add User"}
+        onPress={() => {
+          alert("presed");
+        }}
+      ></Button>
+      <Button
+        style={styles.button}
+        title={"Create Group"}
+        onPress={() => {
+          alert("presed");
+        }}
+      ></Button>
+      <Button
+        title={"Create Event"}
+        onPress={() => {
+          alert("presed");
+        }}
+      ></Button>
+      <StatusBar style="auto" />
     </View>
-  )
+  );
 }
-
-export default HomeScreen
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    width: 400,
+    height: 400,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-   button: {
-    backgroundColor: 'red',
-    width: '60%',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 40,
+  text: {
+    fontSize: 30,
+    margin: 10,
+    color: "green",
+    fontStyle: "italic",
   },
-  buttonText: {
-    color: 'white',
-    fontWeight: '700',
-    fontSize: 16,
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#777",
+    padding: 8,
+    margin: 10,
+    width: 200,
   },
-})
+  button: {
+    marginTop: 10,
+  },
+});
